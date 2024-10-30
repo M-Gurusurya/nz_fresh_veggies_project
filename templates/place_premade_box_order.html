@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Place {{ size|capitalize }} Box Order</h1>
+
+    <div class="alert alert-info">
+        <h4>Box Limits:</h4>
+        <ul>
+            <li>Weighted Vegetables: {{ limits.weighted.min }}-{{ limits.weighted.max }} kg</li>
+            <li>Pack Vegetables: {{ limits.pack.min }}-{{ limits.pack.max }} packs</li>
+            <li>Unit Vegetables: {{ limits.unit.min }}-{{ limits.unit.max }} units</li>
+        </ul>
+    </div>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0">Weighted Vegetables (add within {{ limits.weighted.min }}-{{ limits.weighted.max }}kg)</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Vegetable Name</th>
+                            <th>Price per kg</th>
+                            <th>Quantity (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for veggie in weighted_veggies %}
+                            <tr>
+                                <td>{{ veggie.vegName }}</td>
+                                <td>${{ "%.2f"|format(veggie.weightPerKilo) }}</td>
+                                <td>
+                                    <input type="number" name="quantity_{{ veggie.id }}" value="0" min="0" step="0.1" max="{{ limits.weighted.max }}" class="form-control">
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h2 class="h4 mb-0">Pack Vegetables (add within {{ limits.pack.min }}-{{ limits.pack.max }} packs)</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Vegetable Name</th>
+                            <th>Price per pack</th>
+                            <th>Quantity (packs)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for veggie in pack_veggies %}
+                            <tr>
+                                <td>{{ veggie.vegName }}</td>
+                                <td>${{ "%.2f"|format(veggie.pricePerPack) }}</td>
+                                <td>
+                                    <input type="number" name="quantity_{{ veggie.id }}" value="0" min="0" max="{{ limits.pack.max }}" class="form-control">
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h2 class="h4 mb-0">Unit Vegetables (add within {{ limits.unit.min }}-{{ limits.unit.max }} units)</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Vegetable Name</th>
+                            <th>Price per unit</th>
+                            <th>Quantity (units)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for veggie in unit_veggies %}
+                            <tr>
+                                <td>{{ veggie.vegName }}</td>
+                                <td>${{ "%.2f"|format(veggie.pricePerUnit) }}</td>
+                                <td>
+                                    <input type="number" name="quantity_{{ veggie.id }}" value="0" min="0" max="{{ limits.unit.max }}" class="form-control">
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+    </form>
+</div>
+{% endblock %}

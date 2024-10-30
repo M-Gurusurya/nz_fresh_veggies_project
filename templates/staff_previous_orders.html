@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Previous Orders</h1>
+<p class="lead">These are your orders that have been delivered or cancelled.</p>
+
+{% if orders %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order Number</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.orderCustomer.firstName }} {{ order.orderCustomer.lastName }}</td>
+                <td>{{ order.orderDate.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td class="
+                {% if order.orderStatus == 'Delivered' %}text-success{% endif %}
+                {% if order.orderStatus == 'Cancelled' %}text-danger{% endif %}
+                ">{{ order.orderStatus }}</td>
+                <td>
+                    <ul>
+                    {% for line in order.orderLines %}
+                        <li>
+                            {% if line.item.type == 'veggie' %}
+                                {{ line.item.vegName }}
+                            {% elif line.item.type == 'premade_box' %}
+                                {{ line.item.boxSize }} Box
+                            {% else %}
+                                {{ line.item.name }}
+                            {% endif %}
+                            - Quantity: {{ line.quantity }}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </td>
+                <td>${{ "%.2f"|format(calculate_order_total(order)) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>There are no previous orders.</p>
+{% endif %}
+{% endblock %}

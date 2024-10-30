@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome, {{ user.firstName }} {{ user.lastName }}</h1>
+<p>Customer ID: {{ user.custID }}</p>
+<p>Current Balance: ${{ "%.2f"|format(user.custBalance) }}</p>
+<div class="dashboard-actions">
+    <a href="{{ url_for('place_order') }}" class="btn">Place New Order</a>
+    <a href="{{ url_for('view_current_order') }}" class="btn">View Current Order</a>
+    <a href="{{ url_for('view_previous_orders') }}" class="btn">View Previous Orders</a>
+    <a href="{{ url_for('settle_balance') }}" class="btn">Settle Balance</a>
+</div>
+{% endblock %}

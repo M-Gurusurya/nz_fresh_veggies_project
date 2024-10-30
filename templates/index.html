@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome to Fresh Harvest Veggies</h1>
+<p>We offer high-quality farm-fresh vegetables delivered right to your doorstep.</p>
+<div class="cta-buttons">
+    {% if 'user_id' not in session %}
+        <a href="{{ url_for('login') }}" class="btn">Login</a>
+    {% else %}
+        {% if session.user_type == 'customer' %}
+            <a href="{{ url_for('place_order') }}" class="btn">Place an Order</a>
+        {% elif session.user_type == 'staff' %}
+            <a href="{{ url_for('staff_view_current_orders') }}" class="btn">View Current Orders</a>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

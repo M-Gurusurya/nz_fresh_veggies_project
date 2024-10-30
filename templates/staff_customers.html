@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>All Customers</h1>
+
+<div class="search-container mb-3">
+    <input type="text" id="customerSearch" class="form-control" placeholder="Search by Customer ID or Name">
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Customer ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Address</th>
+            <th>Current Balance</th>
+            <th>Maximum Owing</th>
+            <th>Additional Info</th>
+        </tr>
+    </thead>
+    <tbody id="customerTableBody">
+        {% for customer in customers %}
+            <tr>
+                <td>{{ customer.custID }}</td>
+                <td>{{ customer.firstName }} {{ customer.lastName }}</td>
+                <td>{{ 'Corporate' if customer.type == 'corporate_customer' else 'Private' }}</td>
+                <td>{{ customer.custAddress }}</td>
+                <td>${{ "%.2f"|format(customer.custBalance) }}</td>
+                <td>${{ "%.2f"|format(customer.maxOwing) }}</td>
+                <td>
+                    {% if customer.type == 'corporate_customer' %}
+                        Discount Rate: {{ customer.discountRate * 100 }}%<br>
+                        Max Credit: ${{ "%.2f"|format(customer.maxCredit) }}<br>
+                        Min Balance: ${{ "%.2f"|format(customer.minBalance) }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('customerSearch');
+    const tableBody = document.getElementById('customerTableBody');
+    const rows = tableBody.getElementsByTagName('tr');
+
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+
+        for (let row of rows) {
+            const custId = row.cells[0].textContent.toLowerCase();
+            const custName = row.cells[1].textContent.toLowerCase();
+            
+            if (custId.includes(searchTerm) || custName.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

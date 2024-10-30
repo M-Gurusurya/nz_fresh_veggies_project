@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">My Details</h1>
+    
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">Customer Information</h2>
+        </div>
+        <div class="card-body">
+            <div class="row py-2 align-items-center bg-light" style="border-bottom: 1px solid black;">
+                <div class="col-sm-4 font-weight-bold">Name:</div>
+                <div class="col-sm-8">{{ customer.firstName }} {{ customer.lastName }}</div>
+            </div>
+            <div class="row py-2 align-items-center" style="border-bottom: 1px solid black;">
+                <div class="col-sm-4 font-weight-bold">Customer ID:</div>
+                <div class="col-sm-8">{{ customer.custID }}</div>
+            </div>
+            <div class="row py-2 align-items-center bg-light" style="border-bottom: 1px solid black;">
+                <div class="col-sm-4 font-weight-bold">Address:</div>
+                <div class="col-sm-8">{{ customer.custAddress }}</div>
+            </div>
+            <div class="row py-2 align-items-center" style="border-bottom: 1px solid black;">
+                <div class="col-sm-4 font-weight-bold">Current Balance:</div>
+                <div class="col-sm-8 text-danger">${{ "%.2f"|format(customer.custBalance) }}</div>
+            </div>
+            <div class="row py-2 align-items-center bg-light" style="border-bottom: 1px solid black;">
+                <div class="col-sm-4 font-weight-bold">Maximum Owing:</div>
+                <div class="col-sm-8 text-warning">${{ "%.2f"|format(customer.maxOwing) }}</div>
+            </div>
+            {% if customer.type == 'corporate_customer' %}
+                <div class="row py-2 align-items-center" style="border-bottom: 1px solid black;">
+                    <div class="col-sm-4 font-weight-bold">Discount Rate:</div>
+                    <div class="col-sm-8 text-success">{{ customer.discountRate * 100 }}%</div>
+                </div>
+                <div class="row py-2 align-items-center bg-light" style="border-bottom: 1px solid black;">
+                    <div class="col-sm-4 font-weight-bold">Maximum Credit:</div>
+                    <div class="col-sm-8 text-info">${{ "%.2f"|format(customer.maxCredit) }}</div>
+                </div>
+                <div class="row py-2 align-items-center" style="border-bottom: 1px solid black;">
+                    <div class="col-sm-4 font-weight-bold">Minimum Balance:</div>
+                    <div class="col-sm-8 text-secondary">${{ "%.2f"|format(customer.minBalance) }}</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

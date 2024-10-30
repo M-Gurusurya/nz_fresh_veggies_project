@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Customer List</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Customer ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Balance</th>
+            <th>Number of Orders</th>
+            <th>Ordered Items and Quantities</th>
+            <th>Total Ordered Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for data in customer_data %}
+            <tr>
+                <td>{{ data.customer.custID }}</td>
+                <td>{{ data.customer.firstName }} {{ data.customer.lastName }}</td>
+                <td>{{ 'Corporate' if data.customer.type == 'corporate_customer' else 'Private' }}</td>
+                <td>${{ "%.2f"|format(data.customer.custBalance) }}</td>
+                <td>{{ data.order_count }}</td>
+                <td>
+                    {% if data.items_ordered %}
+                        <ul>
+                            {% for item in data.items_ordered %}
+                                <li>{{ item.name }}: {{ item.total_quantity }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        No Orders Placed
+                    {% endif %}
+                </td>
+                <td>${{ "%.2f"|format(data.total_ordered_amount) }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

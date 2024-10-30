@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>All Vegetables and Premade Boxes</h1>
+
+<h3>Vegetables</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Vegetable Name</th>
+            <th>Type</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for veggie in veggies %}
+        <tr>
+            <td>{{ veggie.vegName }}</td>
+            <td>
+                {% if veggie.type == 'weighted_veggie' %}
+                    Weighted
+                {% elif veggie.type == 'pack_veggie' %}
+                    Pack
+                {% elif veggie.type == 'unit_price_veggie' %}
+                    Unit Price
+                {% endif %}
+            </td>
+            <td>
+                {% if veggie.type == 'weighted_veggie' %}
+                    ${{ "%.2f"|format(veggie.weightPerKilo) }} per kg
+                {% elif veggie.type == 'pack_veggie' %}
+                    ${{ "%.2f"|format(veggie.pricePerPack) }} per pack
+                {% elif veggie.type == 'unit_price_veggie' %}
+                    ${{ "%.2f"|format(veggie.pricePerUnit) }} per unit
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Premade Boxes</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Box Name</th>
+            <th>Size</th>
+            <th>Weighted Veggie Limits</th>
+            <th>Pack Veggie Limits</th>
+            <th>Unit Price Veggie Limits</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for box in premade_boxes %}
+        <tr>
+            <td>{{ box.name }}</td>
+            <td>{{ box.size }}</td>
+            <td>Min: {{ box_limits[box.size.lower()]['weighted']['min'] }}, Max: {{ box_limits[box.size.lower()]['weighted']['max'] }}</td>
+            <td>Min: {{ box_limits[box.size.lower()]['pack']['min'] }}, Max: {{ box_limits[box.size.lower()]['pack']['max'] }}</td>
+            <td>Min: {{ box_limits[box.size.lower()]['unit']['min'] }}, Max: {{ box_limits[box.size.lower()]['unit']['max'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

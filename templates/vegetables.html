@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Our Vegetables</h1>
+<div class="vegetable-list">
+    {% for veggie in veggies %}
+        <div class="vegetable-item">
+            <h2>{{ veggie.vegName }}</h2>
+            {% if veggie.type == 'weighted_veggie' %}
+                <p>Price: ${{ "%.2f"|format(veggie.weightPerKilo) }} per kg</p>
+            {% elif veggie.type == 'pack_veggie' %}
+                <p>Price: ${{ "%.2f"|format(veggie.pricePerPack) }} per pack</p>
+            {% elif veggie.type == 'unit_price_veggie' %}
+                <p>Price: ${{ "%.2f"|format(veggie.pricePerUnit) }} per unit</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

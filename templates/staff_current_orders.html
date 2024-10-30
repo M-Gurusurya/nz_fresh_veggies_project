@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Current Orders</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order Number</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.orderNumber }}</td>
+            <td>{{ order.orderCustomer.firstName }} {{ order.orderCustomer.lastName }}</td>
+            <td>{{ order.orderDate.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>${{ "%.2f"|format(calculate_order_total(order)) }}</td>
+            <td class="
+                {% if order.orderStatus == 'Pending' %}text-warning{% endif %}
+                {% if order.orderStatus == 'Processing' %}text-info{% endif %}
+                {% if order.orderStatus == 'Shipped' %}text-primary{% endif %}
+                {% if order.orderStatus == 'Delivered' %}text-success{% endif %}
+                {% if order.orderStatus == 'Cancelled' %}text-danger{% endif %}
+            ">
+                {{ order.orderStatus }}
+            </td>
+            <td>
+                <form action="{{ url_for('staff_update_order_status', order_id=order.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <select name="status" class="form-control">
+                        <option value="Pending" {% if order.orderStatus == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Processing" {% if order.orderStatus == 'Processing' %}selected{% endif %}>Processing</option>
+                        <option value="Shipped" {% if order.orderStatus == 'Shipped' %}selected{% endif %}>Shipped</option>
+                        <option value="Delivered" {% if order.orderStatus == 'Delivered' %}selected{% endif %}>Delivered</option>
+                        <option value="Cancelled" {% if order.orderStatus == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Update Status</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

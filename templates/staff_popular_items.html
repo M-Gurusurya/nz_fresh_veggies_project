@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Popular Items</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Item Name</th>
+            <th>Total Quantity Sold</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item, total_quantity in popular_items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ total_quantity }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

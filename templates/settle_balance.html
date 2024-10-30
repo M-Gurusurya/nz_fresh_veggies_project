@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Settle Balance</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<h3 class="text-primary">Current Balance: ${{ "%.2f"|format(customer.custBalance) }}</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.payment_amount.label }}
+        {{ form.payment_amount(class="form-control", placeholder="Enter payment amount") }}
+    </div>
+    <div class="form-group">
+        {{ form.payment_method.label }}
+        {{ form.payment_method(class="form-control", id="payment_method") }}
+    </div>
+    <div class="form-group card-only">
+        {{ form.card_number.label }}
+        {{ form.card_number(class="form-control") }}
+    </div>
+    <div class="form-group credit-only">
+        {{ form.expiry_date.label }}
+        {{ form.expiry_date(class="form-control") }}
+    </div>
+    <div class="form-group credit-only">
+        {{ form.cvv.label }}
+        {{ form.cvv(class="form-control") }}
+    </div>
+    <div class="form-group debit-only" style="display: none;">
+        {{ form.bank_name.label }}
+        {{ form.bank_name(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var paymentMethod = document.getElementById('payment_method');
+        var creditFields = document.querySelectorAll('.credit-only');
+        var debitFields = document.querySelectorAll('.debit-only');
+        var cardFields = document.querySelectorAll('.card-only');
+
+        function toggleFields() {
+            if (paymentMethod.value === 'credit') {
+                creditFields.forEach(field => field.style.display = 'block');
+                debitFields.forEach(field => field.style.display = 'none');
+                cardFields.forEach(field => field.style.display = 'block');
+            } else if (paymentMethod.value === 'debit') {
+                creditFields.forEach(field => field.style.display = 'none');
+                debitFields.forEach(field => field.style.display = 'block');
+                cardFields.forEach(field => field.style.display = 'block');
+            }
+        }
+
+        paymentMethod.addEventListener('change', toggleFields);
+        toggleFields();  // Call once to set initial state
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Fresh Harvest Veggies{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Login</h1>
+    <p>demo customer login - (username: cust001, password: custpass123)</p>
+    <p>demo staff login - (username: staff001, password: staffpass123)</p>
+    <form method="POST" action="{{ url_for('login') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.username.label }}
+            {{ form.username(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control") }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome, {{ user.firstName }} {{ user.lastName }}</h1>
+<p>Staff ID: {{ user.staffID }}</p>
+<p>Department: {{ user.deptName }}</p>
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <a href="{{ url_for('staff_view_current_orders') }}" class="btn btn-success btn-block">View Current Orders</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('staff_view_previous_orders') }}" class="btn btn-success btn-block">View Previous Orders</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('staff_view_all_customers') }}" class="btn btn-success btn-block">View All customers</a>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <a href="{{ url_for('staff_generate_customer_list') }}" class="btn btn-success btn-block">Generate customer List</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('staff_view_all_vegetables') }}" class="btn btn-success btn-block">View All Vegetables</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('staff_generate_sales_report') }}" class="btn btn-success btn-block">Generate Sales Report</a>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <a href="{{ url_for('staff_view_popular_items') }}" class="btn btn-success btn-block">Popular Items</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

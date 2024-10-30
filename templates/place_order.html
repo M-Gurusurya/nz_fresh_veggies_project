@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Place Order</h1>
+    <p class="lead text-primary">You can choose either a custom order or a premade box</p>
+
+
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-white">
+            <h2 class="h4 mb-0">Premade Boxes</h2>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-around">
+                <a href="{{ url_for('place_premade_box_order', size='small') }}" class="btn btn-outline-primary">Small Box</a>
+                <a href="{{ url_for('place_premade_box_order', size='medium') }}" class="btn btn-outline-primary">Medium Box</a>
+                <a href="{{ url_for('place_premade_box_order', size='large') }}" class="btn btn-outline-primary">Large Box</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h2 class="h4 mb-0">Custom Order</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Vegetable Name</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            {% if item.type != 'premade_box' %}
+                                <tr>
+                                    <td>{{ item.vegName if item.type == 'veggie' else item.name }}</td>
+                                    <td>{{ item.type }}</td>
+                                    <td>
+                                        {% if item.type == 'weighted_veggie' %}
+                                            ${{ "%.2f"|format(item.weightPerKilo) }} per kg
+                                        {% elif item.type == 'pack_veggie' %}
+                                            ${{ "%.2f"|format(item.pricePerPack) }} per pack
+                                        {% elif item.type == 'unit_price_veggie' %}
+                                            ${{ "%.2f"|format(item.pricePerUnit) }} per unit
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <input type="number" name="quantity_{{ item.id }}" value="0" min="0" class="form-control">
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fresh Harvest Veggies{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{ url_for('index') }}">Fresh Harvest Veggies</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link {% if request.endpoint == 'index' %}active text-danger {% endif %}"  href="{{ url_for('index') }}">Home</a></li>
+                {% if 'user_id' in session %}
+                    {% if session['user_type'] == 'customer' %}
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'dashboard' %}active text-danger{% endif %}" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'place_order' %}active text-danger{% endif %}" href="{{ url_for('place_order') }}">Place Order</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'settle_balance' %}active text-danger{% endif %}" href="{{ url_for('settle_balance') }}">Settle Balance</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'view_current_order' %}active text-danger{% endif %}" href="{{ url_for('view_current_order') }}">Current Order</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'view_previous_orders' %}active text-danger{% endif %}" href="{{ url_for('view_previous_orders') }}">Previous Order</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'view_customer_details' %}active text-danger{% endif %}" href="{{ url_for('view_customer_details') }}">My details</a></li>
+                    {% elif session['user_type'] == 'staff' %}
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'dashboard' %}active text-danger{% endif %}" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'staff_view_current_orders' %}active text-danger{% endif %}" href="{{ url_for('staff_view_current_orders') }}">Current Orders</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'staff_view_previous_orders' %}active text-danger{% endif %}" href="{{ url_for('staff_view_previous_orders') }}">Previous Orders</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'staff_view_all_customers' %}active text-danger{% endif %}" href="{{ url_for('staff_view_all_customers') }}">View All customers</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'staff_generate_customer_list' %}active text-danger{% endif %}" href="{{ url_for('staff_generate_customer_list') }}">Generate customer List</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'staff_view_all_vegetables' %}active text-danger{% endif %}" href="{{ url_for('staff_view_all_vegetables') }}">View All Vegetables</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'staff_generate_sales_report' %}active text-danger{% endif %}" href="{{ url_for('staff_generate_sales_report') }}">Generate Sales Report</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'staff_view_popular_items' %}active text-danger{% endif %}" href="{{ url_for('staff_view_popular_items') }}">Popular Items</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container mt-4 bg-light rounded shadow">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {% if category == 'error' %}alert-danger{% elif category == 'warning' %}alert-warning{% elif category == 'info' %}alert-info{% else %}alert-success{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="mt-5 py-3 bg-light bg-transparent text-center">
+        <p>&copy; 2024 Fresh Harvest Veggies. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

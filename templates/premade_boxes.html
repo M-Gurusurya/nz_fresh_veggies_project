@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Premade Boxes</h1>
+<div class="box-list">
+    {% for box in boxes %}
+        <div class="box-item">
+            <h2>{{ box.name }}</h2>
+            <p>Size: {{ box.boxSize }}</p>
+            <p>Price: ${{ "%.2f"|format(box.price) }}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

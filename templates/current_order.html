@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Current Orders</h1>
+<p class="lead">These are your orders that are currently being processed or are ready for delivery/pickup.</p>
+
+{% if orders %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order Number</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Payment Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.orderDate.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td class="
+                {% if order.orderStatus == 'Pending' %}text-warning{% endif %}
+                {% if order.orderStatus == 'Processing' %}text-info{% endif %}
+                {% if order.orderStatus == 'Shipped' %}text-primary{% endif %}
+                ">{{ order.orderStatus }}</td>
+                <td>
+                    <ul>
+                    {% for line in order.orderLines %}
+                        <li>
+                            {% if line.item.type == 'veggie' %}
+                                {{ line.item.vegName }}
+                            {% elif line.item.type == 'premade_box' %}
+                                {{ line.item.boxSize }} Box
+                            {% else %}
+                                {{ line.item.name }}
+                            {% endif %}
+                            - Quantity: {{ line.quantity }}
+                            - Price: ${{ "%.2f"|format(calculate_item_price(line.item, line.quantity)) }}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </td>
+                <td>${{ "%.2f"|format(calculate_order_total(order)) }}</td>
+                <td>{{ order.payments[0].type.replace('_', ' ').title() if order.payments else 'N/A' }}</td>
+                <td>
+                    <a href="{{ url_for('cancel_order', order_id=order.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>You don't have any current orders.</p>
+{% endif %}
+{% endblock %}

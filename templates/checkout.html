@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Checkout</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Order Summary</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped" id="order-summary">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th class="text-right">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order_items %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td class="text-right">${{ "%.2f"|format(item.price) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2" class="text-right"><strong>Total</strong></td>
+                                <td class="text-right"><strong>${{ "%.2f"|format(subtotal) }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle mr-2"></i>
+                Delivery is available only within a 20-kilometer radius and delivery fee is $10.00.
+            </div>
+
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h5 mb-0">Delivery Options</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            {{ form.delivery_option.label(class="font-weight-bold") }}
+                            {{ form.delivery_option(class="form-control", id="delivery_option") }}
+                        </div>
+                    </div>
+                </div>
+
+                <div id="delivery-summary" style="display: none;">
+                    <div class="card mb-4">
+                        <div class="card-header bg-warning text-white">
+                            <h2 class="h5 mb-0">Delivery Order Summary</h2>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th class="text-right">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order_items %}
+                                    <tr>
+                                        <td>{{ item.name }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td class="text-right">${{ "%.2f"|format(item.price) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" class="text-right">Delivery Charge</td>
+                                        <td class="text-right">${{ "%.2f"|format(delivery_fee) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="text-right"><strong>Total (including delivery)</strong></td>
+                                        <td class="text-right"><strong id="total-with-delivery"></strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h5 mb-0">Payment Information</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            {{ form.payment_method.label(class="font-weight-bold") }}
+                            {{ form.payment_method(class="form-control", id="payment_method") }}
+                        </div>
+                        <div id="credit_fields">
+                            <div class="form-group">
+                                {{ form.card_number.label(class="font-weight-bold") }}
+                                {{ form.card_number(class="form-control", placeholder="enter your 16 digit card number") }}
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    {{ form.expiry_date.label(class="font-weight-bold") }}
+                                    {{ form.expiry_date(class="form-control", placeholder="MM/YY") }}
+                                </div>
+                                <div class="form-group col-md-6">
+                                    {{ form.cvv.label(class="font-weight-bold") }}
+                                    {{ form.cvv(class="form-control", placeholder="123") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div id="debit_fields" style="display: none;">
+                            <div class="form-group">
+                                {{ form.card_number.label(class="font-weight-bold") }}
+                                {{ form.card_number(class="form-control", placeholder="1234 5678 9012 3456") }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.bank_name.label(class="font-weight-bold") }}
+                                {{ form.bank_name(class="form-control", placeholder="Enter bank name") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{ form.submit(class="btn btn-primary btn-lg btn-block", id="submit_button") }}
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h2 class="h5 mb-0">Order Details</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Subtotal:</strong> ${{ "%.2f"|format(subtotal) }}</p>
+                    <p><strong>Delivery Fee:</strong> ${{ "%.2f"|format(delivery_fee) }} (if applicable)</p>
+                    <hr>
+                    <p class="h5"><strong>Total:</strong> <span id="final-total">${{ "%.2f"|format(subtotal) }}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var paymentMethod = document.getElementById('payment_method');
+    var creditFields = document.getElementById('credit_fields');
+    var debitFields = document.getElementById('debit_fields');
+    var submitButton = document.getElementById('submit_button');
+    var deliveryOption = document.getElementById('delivery_option');
+    var deliverySummary = document.getElementById('delivery-summary');
+    var totalWithDelivery = document.getElementById('total-with-delivery');
+    var finalTotal = document.getElementById('final-total');
+
+    // Set initial payment method to credit
+    paymentMethod.value = 'credit';
+
+    function updateTotal() {
+        var subtotal = {{ subtotal }};
+        var deliveryFee = {{ delivery_fee }};
+        var total = subtotal + (deliveryOption.value === 'delivery' ? deliveryFee : 0);
+        totalWithDelivery.textContent = '$' + total.toFixed(2);
+        finalTotal.textContent = '$' + total.toFixed(2);
+        deliverySummary.style.display = deliveryOption.value === 'delivery' ? 'block' : 'none';
+    }
+
+    function updatePaymentFields() {
+        if (paymentMethod.value === 'credit') {
+            creditFields.style.display = 'block';
+            debitFields.style.display = 'none';
+            submitButton.value = 'Complete Payment';
+        } else if (paymentMethod.value === 'debit') {
+            creditFields.style.display = 'none';
+            debitFields.style.display = 'block';
+            submitButton.value = 'Complete Payment';
+        } else {
+            creditFields.style.display = 'none';
+            debitFields.style.display = 'none';
+            submitButton.value = 'Charge to Account';
+        }
+    }
+
+    paymentMethod.addEventListener('change', updatePaymentFields);
+    deliveryOption.addEventListener('change', updateTotal);
+
+    // Initial calls to set up the page
+    updatePaymentFields();
+    updateTotal();
+});
+</script>
+{% endblock %}
